@@ -59,6 +59,7 @@ if test "$PHP_PHALCON" = "yes"; then
 	phalcon/db/adapter/pdo/abstractpdo.zep.c
 	phalcon/db/dialect.zep.c
 	phalcon/di/diinterface.zep.c
+	phalcon/di/exception.zep.c
 	phalcon/encryption/security/jwt/signer/signerinterface.zep.c
 	phalcon/events/abstracteventsaware.zep.c
 	phalcon/filter/validation/validatorcompositeinterface.zep.c
@@ -118,7 +119,8 @@ if test "$PHP_PHALCON" = "yes"; then
 	phalcon/db/indexinterface.zep.c
 	phalcon/db/referenceinterface.zep.c
 	phalcon/db/resultinterface.zep.c
-	phalcon/di/exception.zep.c
+	phalcon/di/autowireinterface.zep.c
+	phalcon/di/binddefinitioninterface.zep.c
 	phalcon/di/factorydefault.zep.c
 	phalcon/di/serviceinterface.zep.c
 	phalcon/domain/payload/payloadinterface.zep.c
@@ -265,6 +267,12 @@ if test "$PHP_PHALCON" = "yes"; then
 	phalcon/db/rawvalue.zep.c
 	phalcon/db/reference.zep.c
 	phalcon/db/result/pdoresult.zep.c
+	phalcon/di/autowire.zep.c
+	phalcon/di/autowiretypesproviderinterface.zep.c
+	phalcon/di/autowiretypesstaticproviderinterface.zep.c
+	phalcon/di/binddefinition.zep.c
+	phalcon/di/exception/autowireexception.zep.c
+	phalcon/di/exception/bindexception.zep.c
 	phalcon/di/exception/serviceresolutionexception.zep.c
 	phalcon/di/factorydefault/cli.zep.c
 	phalcon/di/initializationawareinterface.zep.c

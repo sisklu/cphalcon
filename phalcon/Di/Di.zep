@@ -22,6 +22,10 @@ use Phalcon\Events\ManagerInterface;
 use Phalcon\Di\InitializationAwareInterface;
 use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\Di\ServiceProviderInterface;
+use Phalcon\Di\BindDefinitionInterface;
+use Phalcon\Di\BindDefinition;
+use Phalcon\Di\Exception\BindException;
+use Phalcon\Di\AutowireInterface;
 
 /**
  * Phalcon\Di\Di is a component that implements Dependency Injection/Service
@@ -92,13 +96,27 @@ class Di implements DiInterface
     protected static defaultDi;
 
     /**
+     * List of registered services
+     *
+     * @var BindDefinitionInterface[]
+     */
+    protected binds = [];
+
+    /**
+     * @var AutowireInterface|null
+     */
+    protected autowire;
+
+    /**
      * Phalcon\Di\Di constructor
      */
-    public function __construct()
+    public function __construct(<AutowireInterface> autowire = null)
     {
         if !self::defaultDi {
             let self::defaultDi = this;
         }
+
+        let this->autowire = autowire;
     }
 
     /**
@@ -158,17 +176,17 @@ class Di implements DiInterface
             return false;
         }
 
-        let this->services[name] = new Service(definition, shared);
-
-        return this->services[name];
+        return this->set(name, definition, shared);
     }
 
     /**
      * Resolves the service based on its configuration
      */
-    public function get(string! name, parameters = null) -> var
+    public function get(string! name, parameters = null, array autowireTypes = []) -> var
     {
-        var service, eventsManager, isShared, instance = null;
+        var service, eventsManager, isShared, instance = null, autowire = null;
+
+        let autowire = this->autowire;
 
         /**
          * If the service is shared and it already has a cached instance then
@@ -225,10 +243,17 @@ class Di implements DiInterface
                     );
                 }
 
-                if typeof parameters == "array" && count(parameters) {
-                    let instance = create_instance_params(name, parameters);
+                if typeof autowire === "object" {
+                    /**
+                     * Resolve using autowire component
+                     */
+                    let instance = autowire->resolve(this, name, parameters, autowireTypes);
                 } else {
-                    let instance = create_instance(name);
+                    if typeof parameters == "array" && count(parameters) {
+                        let instance = create_instance_params(name, parameters);
+                    } else {
+                        let instance = create_instance(name);
+                    }
                 }
             }
         }
@@ -549,6 +574,13 @@ class Di implements DiInterface
     {
         let this->services[name] = new Service(definition, shared);
 
+        /**
+         * If definition is string and it's class add it also to autowire binding
+         */
+        if typeof this->autowire === "object" && typeof definition === "string" && class_exists(definition) {
+            this->bind(definition, name, shared);
+        }
+
         return this->services[name];
     }
 
@@ -585,5 +617,51 @@ class Di implements DiInterface
     public function setShared(string! name, var definition) -> <ServiceInterface>
     {
         return this->set(name, definition, true);
+    }
+
+    public function bind(string !className, string! definition, bool isShared = false) -> <DiInterface>
+    {
+        var autowire;
+
+        let autowire = this->autowire;
+
+        if unlikely typeof autowire !== "object" {
+            throw new Exception("Di::bind method requires autowire component added to Di");
+        }
+
+        autowire->bind(className, definition, isShared);
+
+        return this;
+    }
+
+    public function hasBind(string! className, string definition = null) -> bool
+    {
+        var autowire;
+
+        let autowire = this->autowire;
+
+        if unlikely typeof autowire !== "object" {
+            throw new Exception("Di::hasBind method requires autowire component added to Di");
+        }
+
+        return autowire->hasBind(className, definition);
+    }
+
+    public function getBind(string! className, string definition = null) -> <BindDefinitionInterface> | null
+    {
+        var autowire;
+
+        let autowire = this->autowire;
+
+        if unlikely typeof autowire !== "object" {
+            throw new Exception("Di::getBind method requires autowire component added to Di");
+        }
+
+        return autowire->getBind(className, definition);
+    }
+
+    public function getAutowire() -> <AutowireInterface>
+    {
+        return this->autowire;
     }
 }

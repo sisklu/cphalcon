@@ -17,6 +17,7 @@ use Phalcon\Db\DialectInterface;
 use Phalcon\Db\Enum;
 use Phalcon\Db\RawValue;
 use Phalcon\Di\AbstractInjectionAware;
+use Phalcon\Di\AutowireInterface;
 use Phalcon\Di\Di;
 use Phalcon\Di\DiInterface;
 use Phalcon\Events\ManagerInterface as EventsManagerInterface;
@@ -169,6 +170,8 @@ abstract class Model extends AbstractInjectionAware implements EntityInterface, 
         <DiInterface> container = null,
         <ManagerInterface> modelsManager = null
     ) {
+        var autowire;
+
         /**
          * We use a default DI if the user doesn't define one
          */
@@ -211,7 +214,15 @@ abstract class Model extends AbstractInjectionAware implements EntityInterface, 
          * an instance is created
          */
         if method_exists(this, "onConstruct") {
-            this->{"onConstruct"}(data);
+            if method_exists(container, "getAutowire") {
+                let autowire = container->getAutowire();
+            }
+
+            if autowire && autowire instanceof AutowireInterface {
+                autowire->resolveMethod(container, this, "onConstruct", ["data" : data]);
+            } else {
+                this->{"onConstruct"}(data);
+            }
         }
 
         if typeof data == "array" {

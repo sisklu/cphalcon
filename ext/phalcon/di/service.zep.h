@@ -13,6 +13,8 @@ PHP_METHOD(Phalcon_Di_Service, setDefinition);
 PHP_METHOD(Phalcon_Di_Service, setParameter);
 PHP_METHOD(Phalcon_Di_Service, setShared);
 PHP_METHOD(Phalcon_Di_Service, setSharedInstance);
+PHP_METHOD(Phalcon_Di_Service, setAutowireTypes);
+zend_object *zephir_init_properties_Phalcon_Di_Service(zend_class_entry *class_type);
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_service___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, definition)
@@ -57,6 +59,13 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_phalcon_di_service_setsharedinst
 	ZEND_ARG_INFO(0, sharedInstance)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_service_setautowiretypes, 0, 1, Phalcon\\Di\\ServiceInterface, 0)
+	ZEND_ARG_ARRAY_INFO(0, autowireTypes, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_service_zephir_init_properties_phalcon_di_service, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEPHIR_INIT_FUNCS(phalcon_di_service_method_entry) {
 	PHP_ME(Phalcon_Di_Service, __construct, arginfo_phalcon_di_service___construct, ZEND_ACC_FINAL|ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
 #if PHP_VERSION_ID >= 80000
@@ -72,5 +81,6 @@ ZEPHIR_INIT_FUNCS(phalcon_di_service_method_entry) {
 	PHP_ME(Phalcon_Di_Service, setParameter, arginfo_phalcon_di_service_setparameter, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Service, setShared, arginfo_phalcon_di_service_setshared, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Service, setSharedInstance, arginfo_phalcon_di_service_setsharedinstance, ZEND_ACC_PUBLIC)
+	PHP_ME(Phalcon_Di_Service, setAutowireTypes, arginfo_phalcon_di_service_setautowiretypes, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };

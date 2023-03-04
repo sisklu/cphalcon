@@ -14,6 +14,7 @@
 #include "kernel/main.h"
 #include "kernel/object.h"
 #include "kernel/fcall.h"
+#include "kernel/operators.h"
 #include "kernel/memory.h"
 
 
@@ -67,17 +68,39 @@ ZEPHIR_INIT_CLASS(Phalcon_Cli_Task)
  */
 PHP_METHOD(Phalcon_Cli_Task, __construct)
 {
+	zend_bool _0$$3;
+	zval autowire, container, _1$$5;
 	zephir_method_globals *ZEPHIR_METHOD_GLOBALS_PTR = NULL;
 	zend_long ZEPHIR_LAST_CALL_STATUS;
 	zval *this_ptr = getThis();
 
+	ZVAL_UNDEF(&autowire);
+	ZVAL_UNDEF(&container);
+	ZVAL_UNDEF(&_1$$5);
 
 
 	ZEPHIR_MM_GROW();
 
 	if ((zephir_method_exists_ex(this_ptr, ZEND_STRL("onconstruct")) == SUCCESS)) {
-		ZEPHIR_CALL_METHOD(NULL, this_ptr, "onconstruct", NULL, 0);
+		ZEPHIR_CALL_METHOD(&container, this_ptr, "getdi", NULL, 0);
 		zephir_check_call_status();
+		if ((zephir_method_exists_ex(&container, ZEND_STRL("getautowire")) == SUCCESS)) {
+			ZEPHIR_CALL_METHOD(&autowire, &container, "getautowire", NULL, 0);
+			zephir_check_call_status();
+		}
+		_0$$3 = zephir_is_true(&autowire);
+		if (_0$$3) {
+			_0$$3 = zephir_instance_of_ev(&autowire, phalcon_di_autowireinterface_ce);
+		}
+		if (_0$$3) {
+			ZEPHIR_INIT_VAR(&_1$$5);
+			ZVAL_STRING(&_1$$5, "onConstruct");
+			ZEPHIR_CALL_METHOD(NULL, &autowire, "resolvemethod", NULL, 0, &container, this_ptr, &_1$$5);
+			zephir_check_call_status();
+		} else {
+			ZEPHIR_CALL_METHOD(NULL, this_ptr, "onconstruct", NULL, 0);
+			zephir_check_call_status();
+		}
 	}
 	ZEPHIR_MM_RESTORE();
 }

@@ -29,9 +29,14 @@ PHP_METHOD(Phalcon_Di_Di, setDefault);
 PHP_METHOD(Phalcon_Di_Di, setInternalEventsManager);
 PHP_METHOD(Phalcon_Di_Di, setService);
 PHP_METHOD(Phalcon_Di_Di, setShared);
+PHP_METHOD(Phalcon_Di_Di, bind);
+PHP_METHOD(Phalcon_Di_Di, hasBind);
+PHP_METHOD(Phalcon_Di_Di, getBind);
+PHP_METHOD(Phalcon_Di_Di, getAutowire);
 zend_object *zephir_init_properties_Phalcon_Di_Di(zend_class_entry *class_type);
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_di___construct, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO(0, autowire, Phalcon\\Di\\AutowireInterface, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_di___call, 0, 0, 1)
@@ -52,6 +57,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_di_get, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, name, IS_STRING, 0)
 	ZEND_ARG_INFO(0, parameters)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, autowireTypes, IS_ARRAY, 0, "[]")
+#else
+	ZEND_ARG_ARRAY_INFO(0, autowireTypes, 0)
+#endif
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_di_getdefault, 0, 0, Phalcon\\Di\\DiInterface, 1)
@@ -161,15 +171,30 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_di_setshared, 0, 2, Ph
 	ZEND_ARG_INFO(0, definition)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_di_bind, 0, 2, Phalcon\\Di\\DiInterface, 0)
+	ZEND_ARG_TYPE_INFO(0, className, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, definition, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, isShared, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_phalcon_di_di_hasbind, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, className, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, definition, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_di_getbind, 0, 1, Phalcon\\Di\\BindDefinitionInterface, 1)
+	ZEND_ARG_TYPE_INFO(0, className, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, definition, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_phalcon_di_di_getautowire, 0, 0, Phalcon\\Di\\AutowireInterface, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_phalcon_di_di_zephir_init_properties_phalcon_di_di, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEPHIR_INIT_FUNCS(phalcon_di_di_method_entry) {
-#if PHP_VERSION_ID >= 80000
 	PHP_ME(Phalcon_Di_Di, __construct, arginfo_phalcon_di_di___construct, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-#else
-	PHP_ME(Phalcon_Di_Di, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-#endif
 	PHP_ME(Phalcon_Di_Di, __call, arginfo_phalcon_di_di___call, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Di, attempt, arginfo_phalcon_di_di_attempt, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Di, get, arginfo_phalcon_di_di_get, ZEND_ACC_PUBLIC)
@@ -195,5 +220,9 @@ ZEPHIR_INIT_FUNCS(phalcon_di_di_method_entry) {
 	PHP_ME(Phalcon_Di_Di, setInternalEventsManager, arginfo_phalcon_di_di_setinternaleventsmanager, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Di, setService, arginfo_phalcon_di_di_setservice, ZEND_ACC_PUBLIC)
 	PHP_ME(Phalcon_Di_Di, setShared, arginfo_phalcon_di_di_setshared, ZEND_ACC_PUBLIC)
+	PHP_ME(Phalcon_Di_Di, bind, arginfo_phalcon_di_di_bind, ZEND_ACC_PUBLIC)
+	PHP_ME(Phalcon_Di_Di, hasBind, arginfo_phalcon_di_di_hasbind, ZEND_ACC_PUBLIC)
+	PHP_ME(Phalcon_Di_Di, getBind, arginfo_phalcon_di_di_getbind, ZEND_ACC_PUBLIC)
+	PHP_ME(Phalcon_Di_Di, getAutowire, arginfo_phalcon_di_di_getautowire, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };

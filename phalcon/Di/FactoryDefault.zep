@@ -23,11 +23,11 @@ class FactoryDefault extends \Phalcon\Di\Di
     /**
      * Phalcon\Di\FactoryDefault constructor
      */
-    public function __construct()
+    public function __construct(<AutowireInterface> autowire = null, bool addBinds = false)
     {
         var filter;
 
-        parent::__construct();
+        parent::__construct(autowire);
 
         let filter = new FilterFactory();
 
@@ -76,30 +76,28 @@ class FactoryDefault extends \Phalcon\Di\Di
             "url"                : new Service("Phalcon\\Mvc\\Url", true)
         ];
 
-//        this->setShared(
-//            "assets",
-//            [
-//                "className" : "Phalcon\\Assets\\Manager",
-//                "arguments" : [
-//                    [
-//                        "type" : "service",
-//                        "name" : "tag"
-//                    ]
-//                ]
-//            ]
-//        );
-//
-//        this->setShared(
-//            "tag",
-//            [
-//                "className" : "Phalcon\\Html\\TagFactory",
-//                "arguments" : [
-//                    [
-//                        "type" : "service",
-//                        "name" : "escaper"
-//                    ]
-//                ]
-//            ]
-//        );
+        if autowire != null && addBinds {
+            autowire->addBinds([
+                "Phalcon\\Annotations\\Adapter\\Memory": "annotations",
+                "Phalcon\\Assets\\Manager": "assets",
+                "Phalcon\\Encryption\\Crypt": "crypt",
+                "Phalcon\\Http\\Response\\Cookies": "cookies",
+                "Phalcon\\Mvc\\Dispatcher": "dispatcher",
+                "Phalcon\\Html\\Escaper": "escaper",
+                "Phalcon\\Events\\Manager": "eventsManager",
+                "Phalcon\\Flash\\Direct": "flash",
+                "Phalcon\\Flash\\Session": "flashSession",
+                "Phalcon\\Mvc\\Model\\Manager": "modelsManager",
+                "Phalcon\\Mvc\\Model\\MetaData\\Memory": "modelsMetadata",
+                "Phalcon\\Http\\Request": "request",
+                "Phalcon\\Http\\Response": "response",
+                "Phalcon\\Mvc\\Router": "router",
+                "Phalcon\\Encryption\\Security": "security",
+                "Phalcon\\Html\\TagFactory": "tag",
+                "Phalcon\\Mvc\\Model\\Transaction\\Manager": "transactionManager",
+                "Phalcon\\Mvc\\Url": "url",
+                "Phalcon\\Filter\\Filter": "filter"
+            ]);
+        }
     }
 }

@@ -10,9 +10,12 @@
 
 namespace Phalcon\Cli;
 
+use Phalcon\Di\AutowireInterface;
+use Phalcon\Di\DiInterface;
 use Phalcon\Di\Injectable;
 use Phalcon\Events\EventsAwareInterface;
 use Phalcon\Events\ManagerInterface;
+
 /**
  * Every command-line task should extend this class that encapsulates all the
  * task functionality
@@ -49,8 +52,20 @@ class Task extends Injectable implements TaskInterface, EventsAwareInterface
      */
     final public function __construct()
     {
+        var autowire, container;
+
         if method_exists(this, "onConstruct") {
-            this->{"onConstruct"}();
+            let container = this->getDI();
+
+            if method_exists(container, "getAutowire") {
+                let autowire = container->getAutowire();
+            }
+
+            if autowire && autowire instanceof AutowireInterface {
+                autowire->resolveMethod(container, this, "onConstruct");
+            } else {
+                this->{"onConstruct"}();
+            }
         }
     }
 
